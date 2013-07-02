@@ -26,7 +26,7 @@ def server(port=0, host=""):
     """ Register a callable as a handler. """
     def wrapper(fn):
         GrammeHandler._handler = staticmethod(fn)
-        _server = socketserver.UDPServer((host, port), GrammeHandler)
+        _server = socketserver.UDPServer((host, int(port)), GrammeHandler)
         log.info('Starting server on: {0}:{1}'.format(*_server.server_address))
         try:
             _server.serve_forever()
@@ -39,9 +39,9 @@ def server(port=0, host=""):
 
 class GrammeClient(object):
     """ Packs and sends data to a socket """
-    def __init__(self, host, port):
+    def __init__(self, port, host=""):
         self.host = host
-        self.port = port
+        self.port = int(port)
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def send(self, data):
