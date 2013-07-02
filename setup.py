@@ -10,7 +10,7 @@ with open('README.rst') as file:
 
 setup(
     name='gramme',
-    version='0.1.0',
+    version='0.1.1',
     url='http://weighted-random.github.com/wr/',
     license='BSD',
     author='Daniel Waardal',
@@ -20,6 +20,7 @@ setup(
     py_modules=['gramme'],
     zip_safe=True,
     platforms='any',
+    install_requires=['logbook','msgpack-python',],
     classifiers=[
         # As from http://pypi.python.org/pypi?%3Aaction=list_classifiers
         #'Development Status :: 1 - Planning',
