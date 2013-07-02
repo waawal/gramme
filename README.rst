@@ -8,23 +8,23 @@ Example Server
 --------------
 ::
 
-    from gramme import server
+    import gramme
 
-    @server(3030)
-    def handler(data)
+    @gramme.server(3030)
+    def my_awsome_data_handler(data)
         print data
 
 Example Client
 --------------
 ::
 
-    from gramme import client
+    import gramme
 
-    clnt = client(host="132.23.x.x", port=3030)
+    client = gramme.client(host="132.23.x.x", port=3030)
 
-    some_data = {'i am': 'a dict'}
+    some_data = {'i am': 'a dict', 'containing a list': ['string', 3, 4]}
 
-    clnt.send(some_data)
+    client.send(some_data)
 
 
 Installation
