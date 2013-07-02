@@ -9,7 +9,7 @@ except ImportError:
 from logbook import Logger
 import msgpack
 
-log = Logger(__name__)
+log = Logger('gramme', level='NOTICE')
 
 
 class GrammeHandler(socketserver.BaseRequestHandler):
@@ -28,11 +28,11 @@ def server(port=0, host=""):
     def wrapper(fn):
         GrammeHandler._handler = staticmethod(fn)
         _server = socketserver.UDPServer((host, int(port)), GrammeHandler)
-        log.info('Starting server on: {0}:{1}'.format(*_server.server_address))
+        log.notice('Starting server on: {0}:{1}'.format(*_server.server_address))
         try:
             _server.serve_forever()
         except KeyboardInterrupt:
-            log.info('Shutting down server')
+            log.notice('Shutting down server')
             _server.shutdown()
         return fn
     return wrapper
