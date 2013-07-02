@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import socket
-import time
-
-
-from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor
+try:
+    import socketserver
+except ImportError:
+    import SocketServer as socketserver
 
 from logbook import Logger
 import msgpack
@@ -13,27 +12,27 @@ import msgpack
 log = Logger(__name__)
 
 
-class GrammeServer(DatagramProtocol):
+class GrammeHandler(socketserver.BaseRequestHandler):
 
-    def __init__(self, handler):
-        self._handler = handler
-
-    def datagramReceived(self, datagram, address):
-        data = msgpack.unpackb(datagram)
-        log.info('Recieved message from: {0}'.format(str(address)))
-        log.debug(dict(raw=datagram, data=data, socket=address))
-        return self._handler(data)
+    def handle(self):
+        data = msgpack.unpackb(self.request[0])
+        socket = self.request[1]
+        log.info('Recieved message from: {0}'.format(str(socket)))
+        log.debug(dict(raw=self.request[0], data=data, socket=socket))
+        return GrammeHandler._handler(data)
 
 
-def server(host="", port=0):
-
+def server(port=0, host=""):
     def wrapper(fn):
-
-        log.info('Starting up server: {0}:{1}'.format(host, port))
-        reactor.listenUDP(port, GrammeServer(fn))
-        reactor.run()
+        GrammeHandler._handler = staticmethod(fn)
+        _server = socketserver.UDPServer((host, port), GrammeHandler)
+        log.info('Starting server on: {0}:{1}'.format(*_server.server_address))
+        try:
+            _server.serve_forever()
+        except KeyboardInterrupt:
+            log.info('Shutting down server')
+            _server.shutdown()
         return fn
-
     return wrapper
 
 
@@ -47,13 +46,8 @@ class GrammeClient(object):
     def send(self, data):
         packaged = msgpack.packb(data)
         log.info('Sending data to: {0}:{1}'.format(self.host, self.port))
-        log.debug(dict(raw=data, packaged=packaged, host=self.host, port=self.port))
+        log.debug(dict(raw=data, packaged=packaged,
+                       host=self.host, port=self.port))
         self._sock.sendto(packaged, (self.host, self.port))
 
 client = GrammeClient
-
-
-@server(3030)
-def data_handler(data):
-    print data
-
