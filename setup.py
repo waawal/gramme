@@ -10,8 +10,8 @@ with open('README.rst') as file:
 
 setup(
     name='gramme',
-    version='0.1.1',
-    url='http://weighted-random.github.com/wr/',
+    version='0.1.2',
+    url='http://github.com/waawal/gramme',
     license='BSD',
     author='Daniel Waardal',
     author_email='waawal@boom.ws',

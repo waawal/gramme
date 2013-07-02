@@ -34,7 +34,7 @@ Install *gramme* with pip:
 
 ::
 
-    $ pip install greenbalance
+    $ pip install gramme
 
 
 License
