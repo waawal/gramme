@@ -11,7 +11,7 @@ with open('README.rst') as file:
 setup(
     name='gramme',
     version='0.1.2',
-    url='http://github.com/waawal/gramme',
+    url='https://github.com/waawal/gramme',
     license='BSD',
     author='Daniel Waardal',
     author_email='waawal@boom.ws',
