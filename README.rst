@@ -21,9 +21,7 @@ Example Client
     import gramme
 
     client = gramme.client(host="132.23.x.x", port=3030)
-
     some_data = {'i am': 'a dict', 'containing a list': ['string', 3, 4]}
-
     client.send(some_data)
 
 
