@@ -14,12 +14,13 @@ log = Logger(__name__)
 
 class GrammeHandler(socketserver.BaseRequestHandler):
     """ Unpacks the data and pass it down to the registered handler. """
+
     def handle(self):
-        data = msgpack.unpackb(self.request[0])
-        socket = self.request[1]
-        log.info('Recieved message from: {0}'.format(str(socket)))
-        log.debug(dict(raw=self.request[0], data=data, socket=socket))
-        return GrammeHandler._handler(data)
+        raw, sock = self.request
+        unpacked = msgpack.unpackb(raw)
+        log.info('Recieved message from: {0}'.format(str(sock)))
+        log.debug(dict(raw=raw, unpacked=unpacked, socket=sock))
+        return GrammeHandler._handler(unpacked)
 
 
 def server(port=0, host=""):
@@ -38,7 +39,8 @@ def server(port=0, host=""):
 
 
 class GrammeClient(object):
-    """ Packs and sends data to a socket """
+    """ Packs and sends data down a socket """
+
     def __init__(self, port, host=""):
         self.host = host
         self.port = int(port)
@@ -50,5 +52,6 @@ class GrammeClient(object):
         log.debug(dict(raw=data, packaged=packaged,
                        host=self.host, port=self.port))
         self._sock.sendto(packaged, (self.host, self.port))
+
 
 client = GrammeClient
