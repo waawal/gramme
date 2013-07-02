@@ -13,7 +13,7 @@ log = Logger(__name__)
 
 
 class GrammeHandler(socketserver.BaseRequestHandler):
-
+    """ Unpacks the data and pass it down to the registered handler. """
     def handle(self):
         data = msgpack.unpackb(self.request[0])
         socket = self.request[1]
@@ -23,6 +23,7 @@ class GrammeHandler(socketserver.BaseRequestHandler):
 
 
 def server(port=0, host=""):
+    """ Register a callable as a handler. """
     def wrapper(fn):
         GrammeHandler._handler = staticmethod(fn)
         _server = socketserver.UDPServer((host, port), GrammeHandler)
@@ -37,7 +38,7 @@ def server(port=0, host=""):
 
 
 class GrammeClient(object):
-
+    """ Packs and sends data to a socket """
     def __init__(self, host, port):
         self.host = host
         self.port = port
