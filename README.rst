@@ -11,7 +11,7 @@ Example Server
     import gramme
 
     @gramme.server(3030)
-    def my_awsome_data_handler(data)
+    def my_awsome_data_handler(data):
         print data
 
 Example Client
