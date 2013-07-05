@@ -45,10 +45,10 @@ class GrammeClient(object):
         self.host = host
         self.port = int(port)
         if transport in ('udp', 'datagram', 'dgram', 'datagramme'):
-            self.transport = 'udp'
+            self._transport = 'udp'
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         else:
-            self.transport = 'tcp'
+            self._transport = 'tcp'
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def send(self, data):
@@ -56,9 +56,9 @@ class GrammeClient(object):
         log.info('Sending data to: {0}:{1}'.format(self.host, self.port))
         log.debug(dict(raw=data, packaged_data=packaged_data,
                        host=self.host, port=self.port))
-        if self.transport == 'udp':
+        if self._transport == 'udp':
             self._sock.sendto(packaged_data, (self.host, self.port))
-        elif self.transport == 'tcp':
+        elif self._transport == 'tcp':
             self._sock.connect((self.host, self.port))
             self._sock.send(packaged_data)
             self._sock.close()
