@@ -23,7 +23,7 @@ class GrammeHandler(socketserver.BaseRequestHandler):
         return GrammeHandler._handler(unpacked)
 
 
-def server(port=0, host=""):
+def server(port=0, host=''):
     """ Register a callable as a handler. """
     def wrapper(fn):
         GrammeHandler._handler = staticmethod(fn)
@@ -41,17 +41,35 @@ def server(port=0, host=""):
 class GrammeClient(object):
     """ Packs and sends data down a socket """
 
-    def __init__(self, port, host=""):
+    def __init__(self, port, host='', transport='udp'):
         self.host = host
         self.port = int(port)
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        if transport in ('udp', 'datagram', 'dgram', 'datagramme'):
+            self.transport = 'udp'
+            self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        else:
+            self.transport = 'tcp'
+            self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def send(self, data):
-        packaged = msgpack.packb(data)
+        packaged_data = msgpack.packb(data)
         log.info('Sending data to: {0}:{1}'.format(self.host, self.port))
-        log.debug(dict(raw=data, packaged=packaged,
+        log.debug(dict(raw=data, packaged_data=packaged_data,
                        host=self.host, port=self.port))
-        self._sock.sendto(packaged, (self.host, self.port))
+        if self.transport == 'udp':
+            self._sock.sendto(packaged_data, (self.host, self.port))
+        elif self.transport == 'tcp':
+            self._sock.connect((self.host, self.port))
+            self._sock.send(packaged_data)
+            self._sock.close()
+
+    @classmethod
+    def tcp(cls, port, host=''):
+        return cls(port, host=host, transport='tcp')
+
+    @classmethod
+    def udp(cls, port, host=''):
+        return cls(port, host=host, transport='udp')
 
 
 client = GrammeClient
