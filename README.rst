@@ -1,3 +1,8 @@
+.. image:: https://badge.fury.io/py/gramme.png
+    :alt: pypi version
+    :align: right
+    :target: https://pypi.python.org/pypi/gramme
+
 ======
 gramme
 ======
