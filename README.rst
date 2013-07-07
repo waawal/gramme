@@ -1,11 +1,11 @@
-.. image:: https://badge.fury.io/py/gramme.png
-    :alt: pypi version
-    :align: right
-    :target: https://pypi.python.org/pypi/gramme
-
 ======
 gramme
 ======
+
+.. image:: https://badge.fury.io/py/gramme.png
+    :alt: pypi version
+    :align: left
+    :target: https://pypi.python.org/pypi/gramme
 
 A elegant way to pass volatile data around over `UDP (datagrammes) <https://en.wikipedia.org/wiki/User_Datagram_Protocol>`_ serialized with `msgpack <http://msgpack.org/>`_
 
