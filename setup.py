@@ -10,7 +10,7 @@ with open('README.rst') as file:
 
 setup(
     name='gramme',
-    version='0.1.2',
+    version='0.2.0',
     url='https://github.com/waawal/gramme',
     license='BSD',
     author='Daniel Waardal',
