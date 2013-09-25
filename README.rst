@@ -11,7 +11,8 @@ A elegant way to pass volatile data around over `UDP (datagrammes) <https://en.w
 
 Example Server
 --------------
-::
+
+.. code:: python
 
     import gramme
 
@@ -21,17 +22,18 @@ Example Server
 
 Example Client
 --------------
-::
+
+.. code:: python
 
     import gramme
 
     client = gramme.client(host="132.23.x.x", port=3030)
 
-    some_data = {'i am': 'a dict'}
+    some_data = {'key': 'value'}
     client.send(some_data)
 
-    some_more_data = ['i am a list', 3, 4, {'hello': 'there!'}]
-    client.send(some_more_data)
+    more_data = ['i am a list', 1, {'hello': 'there!'}]
+    client.send(more_data)
 
 
 Installation
