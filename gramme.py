@@ -12,7 +12,7 @@ import msgpack
 log = Logger('gramme', level='NOTICE')
 
 
-class GrammeHandler(socketserver.BaseRequestHandler):
+class GrammeUDPHandler(socketserver.BaseRequestHandler):
     """ Unpacks the data and pass it down to the registered handler. """
 
     def handle(self):
@@ -20,13 +20,37 @@ class GrammeHandler(socketserver.BaseRequestHandler):
         unpacked = msgpack.unpackb(raw)
         log.info('Recieved message from: {0}'.format(str(sock)))
         log.debug(dict(raw=raw, unpacked=unpacked, socket=sock))
-        return GrammeHandler._handler(unpacked)
+        return GrammeUDPHandler._handler(unpacked)
 
+class GrammeTCPHandler(socketserver.StreamRequestHandler):
+    """ Unpacks the data and pass it down to the registered handler. """
 
-def server(port=0, host=''):
-    """ Register a callable as a handler. """
-    def wrapper(fn):
-        GrammeHandler._handler = staticmethod(fn)
+    def handle(self):
+        raw, sock = self.request
+        unpacked = msgpack.unpackb(raw)
+        log.info('Recieved message from: {0}'.format(str(sock)))
+        log.debug(dict(raw=raw, unpacked=unpacked, socket=sock))
+        return GrammeTCPHandler._handler(unpacked)
+
+class GrammeMulticastHandler(socketserver.BaseRequestHandler):
+    """ Unpacks the data and pass it down to the registered handler. """
+
+    def handle(self):
+        raw, sock = self.request
+        unpacked = msgpack.unpackb(raw)
+        log.info('Recieved message from: {0}'.format(str(sock)))
+        log.debug(dict(raw=raw, unpacked=unpacked, socket=sock))
+        return GrammeMulticastHandler._handler(unpacked)
+
+class GrammeServer(object):
+
+    def __init__(self, transport='udp', port=0, host=''):
+        self.transport = transport
+        self.port = port
+        self.host = host
+
+    def start_server(self):
+        GrammeUDPHandler._handler = staticmethod(fn)
         _server = socketserver.UDPServer((host, int(port)), GrammeHandler)
         log.notice('Starting server on: {0}:{1}'.format(*_server.server_address))
         try:
@@ -34,8 +58,39 @@ def server(port=0, host=''):
         except KeyboardInterrupt:
             log.notice('Shutting down server')
             _server.shutdown()
+    @classmethod
+    def udp(cls, port=0, host=''):
+        return cls(transport='udp', port=port, host=host)
+
+    @classmethod
+    def tcp(cls, port=0, host=''):
+        return cls(transport='tcp', port=port, host=host)
+
+    @classmethod
+    def multicast(cls, port=0, host=''):
+        return cls(transport='multicast', port=port, host=host)
+
+def udp(port=0, host=''):
+    """ Register a callable as a handler. """
+    def _wrapper(fn):
+        
         return fn
-    return wrapper
+    return _wrapper
+
+def tcp(port=0, host=''):
+    """ Register a callable as a handler. """
+    def _wrapper(fn):
+        
+        return fn
+    return _wrapper
+
+def multicast(port=0, host=''):
+    """ Register a callable as a handler. """
+    def _wrapper(fn):
+        
+        return fn
+    return _wrapper
+
 
 
 class GrammeClient(object):
@@ -70,6 +125,10 @@ class GrammeClient(object):
     @classmethod
     def udp(cls, port, host=''):
         return cls(port, host=host, transport='udp')
+
+    @classmethod
+    def multicast(cls, port, host=''):
+        return cls(port, host=host, transport='multicast')
 
 
 client = GrammeClient
